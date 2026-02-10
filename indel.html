@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>金顺税务业绩目标拆解计算器</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Microsoft YaHei', sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .calculator-container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            padding: 30px;
+            max-width: 900px;
+            width: 100%;
+        }
+        
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            color: #333;
+            font-size: 28px;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+        
+        .formula-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid #4CAF50;
+        }
+        
+        .formula-box h4 {
+            color: #333;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .formula-box p {
+            color: #666;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        
+        .formula {
+            background: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            color: #333;
+            margin: 10px 0;
+            border: 1px solid #dee2e6;
+        }
+        
+        .input-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+        
+        .month-section, .target-section {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+        
+        .section-title {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #444;
+            margin-bottom: 20px;
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .section-title i {
+            color: #667eea;
+        }
+        
+        .days-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 15px;
+        }
+        
+        .day-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #e9ecef;
+            transition: all 0.3s ease;
+        }
+        
+        .day-item:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+        }
+        
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .day-name {
+            font-weight: 600;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .day-count {
+            color: #666;
+            font-size: 14px;
+        }
+        
+        .input-group {
+            margin-top: 10px;
+        }
+        
+        .input-with-percent {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        
+        .input-with-percent input {
+            flex: 1;
+            padding: 12px 40px 12px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+        
+        .input-with-percent input:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .percent-symbol {
+            position: absolute;
+            right: 15px;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .total-target {
+            margin-top: 25px;
+        }
+        
+        .total-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            text-align: center;
+            background: white;
+            transition: all 0.3s;
+        }
+        
+        .total-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+        
+        .btn {
+            padding: 15px 35px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .btn-calculate {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-calculate:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+        
+        .btn-reset {
+            background: #f8f9fa;
+            color: #666;
+            border: 2px solid #dee2e6;
+        }
+        
+        .btn-reset:hover {
+            background: #e9ecef;
+        }
+        
+        .results-section {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 15px;
+            display: none;
+        }
+        
+        .results-section.active {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .results-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .result-card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+        
+        .result-day {
+            font-size: 16px;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .result-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .result-percent {
+            font-size: 14px;
+            color: #667eea;
+            font-weight: 600;
+            background: rgba(102, 126, 234, 0.1);
+            padding: 5px 12px;
+            border-radius: 20px;
+            display: inline-block;
+        }
+        
+        .result-details {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .result-details div {
+            margin: 5px 0;
+            padding: 3px 0;
+            border-bottom: 1px dashed #eee;
+        }
+        
+        .result-details div:last-child {
+            border-bottom: none;
+        }
+        
+        .summary {
+            margin-top: 25px;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            border-left: 5px solid #4CAF50;
+        }
+        
+        .summary h3 {
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .summary-item:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            color: #333;
+            font-size: 18px;
+        }
+        
+        .validation-error {
+            color: #dc3545;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+        
+        .progress-bar {
+            height: 6px;
+            background: #e9ecef;
+            border-radius: 3px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(to right, #667eea, #764ba2);
+            border-radius: 3px;
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .day-stats {
+            font-size: 12px;
+            color: #888;
+            margin-top: 5px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .calculator-container {
+                padding: 20px;
+            }
+            
+            .input-section {
+                grid-template-columns: 1fr;
+            }
+            
+            .days-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .button-group {
+                flex-direction: column;
+            }
+            
+            .results-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="calculator-container">
+        <div class="header">
+            <h1>📈 金顺税务业绩目标拆解计算器</h1>
+            <p>按照正确的业绩占比公式进行目标拆解</p>
+        </div>
+        
+        <div class="formula-box">
+                            注意：各天业绩占比之和必须等于100%，天数输入本月各工作日出现的次数
+            </p>
+        </div>
+        
+        <div class="input-section">
+            <div class="month-section">
+                <div class="section-title">
+                    <i class="fas fa-calendar-alt"></i>
+                    <span>设置本月各工作日天数</span>
+                </div>
+                <div class="days-grid" id="daysCountGrid">
+                    <!-- 动态生成 -->
+                </div>
+            </div>
+            
+            <div class="target-section">
+                <div class="section-title">
+                    <i class="fas fa-chart-line"></i>
+                    <span>设置各天业绩占比（总和100%）</span>
+                </div>
+                <div class="days-grid" id="daysPercentageGrid">
+                    <!-- 动态生成 -->
+                </div>
+                
+                <div class="total-target">
+                    <div class="section-title">
+                        <i class="fas fa-bullseye"></i>
+                        <span>设置本月总业绩目标</span>
+                    </div>
+                    <input type="number" id="totalTarget" class="total-input" 
+                           placeholder="输入本月总业绩目标（元）" 
+                           min="0" step="100">
+                </div>
+            </div>
+        </div>
+        
+        <div class="button-group">
+            <button class="btn btn-calculate" onclick="calculateTargets()">
+                <i class="fas fa-calculator"></i>
+                计算每日目标
+            </button>
+            <button class="btn btn-reset" onclick="resetCalculator()">
+                <i class="fas fa-redo"></i>
+                重置数据
+            </button>
+        </div>
+        
+        <div class="results-section" id="resultsSection">
+            <div class="section-title">
+                <i class="fas fa-chart-pie"></i>
+                <span>每日业绩目标拆解结果</span>
+            </div>
+            <div class="results-grid" id="resultsGrid">
+                <!-- 动态生成 -->
+            </div>
+            
+            <div class="summary" id="summarySection">
+                <!-- 动态生成 -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 星期数据
+        const daysData = [
+            { id: 'mon', name: '星期一', color: '#667eea' },
+            { id: 'tue', name: '星期二', color: '#764ba2' },
+            { id: 'wed', name: '星期三', color: '#f093fb' },
+            { id: 'thu', name: '星期四', color: '#f5576c' },
+            { id: 'fri', name: '星期五', color: '#4facfe' },
+            { id: 'sat', name: '星期六', color: '#00f2fe' },
+            { id: 'sun', name: '星期天', color: '#43e97b' }
+        ];
+
+        // 初始化
+        document.addEventListener('DOMContentLoaded', () => {
+            initDaysCountGrid();
+            initDaysPercentageGrid();
+            initEventListeners();
+            updateProgressBars();
+            
+            // 设置默认值
+            document.getElementById('totalTarget').value = '100000';
+        });
+
+        // 初始化天数输入
+        function initDaysCountGrid() {
+            const grid = document.getElementById('daysCountGrid');
+            daysData.forEach(day => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day-item';
+                dayElement.innerHTML = `
+                    <div class="day-header">
+                        <div class="day-name">${day.name}</div>
+                        <div class="day-count">本月天数</div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-with-percent">
+                            <input type="number" 
+                                   id="${day.id}-days" 
+                                   class="day-input" 
+                                   min="0" 
+                                   max="31" 
+                                   step="1" 
+                                   placeholder="0"
+                                   value="4">
+                            <span class="percent-symbol">天</span>
+                        </div>
+                        <div class="validation-error" id="${day.id}-days-error"></div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="${day.id}-days-progress"></div>
+                    </div>
+                    <div class="day-stats">
+                        <span>占本月比例</span>
+                        <span id="${day.id}-days-percent">0%</span>
+                    </div>
+                `;
+                grid.appendChild(dayElement);
+            });
+        }
+
+        // 初始化百分比输入
+        function initDaysPercentageGrid() {
+            const grid = document.getElementById('daysPercentageGrid');
+            const defaultPercentages = [20, 18, 19, 18, 19, 4, 2]; // 总和100%
+            
+            daysData.forEach((day, index) => {
+                const dayElement = document.createElement('div');
+                dayElement.className = 'day-item';
+                dayElement.innerHTML = `
+                    <div class="day-header">
+                        <div class="day-name">${day.name}</div>
+                        <div class="day-count">业绩占比</div>
+                    </div>
+                    <div class="input-group">
+                        <div class="input-with-percent">
+                            <input type="number" 
+                                   id="${day.id}-percent" 
+                                   class="percent-input" 
+                                   min="0" 
+                                   max="100" 
+                                   step="0.1" 
+                                   placeholder="0"
+                                   value="${defaultPercentages[index]}">
+                            <span class="percent-symbol">%</span>
+                        </div>
+                        <div class="validation-error" id="${day.id}-percent-error"></div>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="${day.id}-percent-progress" 
+                             style="background: ${day.color}"></div>
+                    </div>
+                    <div class="day-stats">
+                        <span>权重分配</span>
+                        <span id="${day.id}-percent-display">0%</span>
+                    </div>
+                `;
+                grid.appendChild(dayElement);
+            });
+        }
+
+        // 计算每日目标
+        function calculateTargets() {
+            let totalPercent = 0;
+            let totalTarget = parseFloat(document.getElementById('totalTarget').value);
+            
+            // 重置错误提示
+            document.querySelectorAll('.validation-error').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // 验证总目标
+            if (!totalTarget || totalTarget <= 0) {
+                showError('totalTarget', '请输入有效的总业绩目标');
+                return;
+            }
+            
+            // 收集各天数据
+            const dayResults = daysData.map(day => {
+                const days = parseFloat(document.getElementById(`${day.id}-days`).value) || 0;
+                const percent = parseFloat(document.getElementById(`${day.id}-percent`).value) || 0;
+                
+                totalPercent += percent;
+                
+                return {
+                    ...day,
+                    days,
+                    percent
+                };
+            });
+            
+            // 验证总百分比
+            if (Math.abs(totalPercent - 100) > 0.1) {
+                showError('mon-percent', `各天业绩占比之和为${totalPercent.toFixed(1)}%，必须等于100%`);
+                return;
+            }
+            
+            // 计算每日目标
+            dayResults.forEach(result => {
+                // 该天的总目标 = 本月总目标 × 该天占比%
+                result.totalTarget = (totalTarget * result.percent) / 100;
+                
+                // 该天每日平均目标 = 该天总目标 ÷ 该天天数
+                result.dailyAverage = result.days > 0 
+                    ? result.totalTarget / result.days 
+                    : 0;
+                
+                // 保存计算过程
+                result.calculation = `${formatNumber(totalTarget)} × ${result.percent}% = ${formatNumber(result.totalTarget.toFixed(2))}`;
+            });
+            
+            // 更新进度条
+            updateProgressBars();
+            
+            // 显示结果
+            displayResults(dayResults, totalTarget);
+        }
+
+        // 显示错误
+        function showError(elementId, message) {
+            const errorElement = document.getElementById(`${elementId}-error`);
+            if (errorElement) {
+                errorElement.textContent = message;
+                errorElement.style.display = 'block';
+            }
+            document.getElementById('resultsSection').classList.remove('active');
+        }
+
+        // 更新进度条
+        function updateProgressBars() {
+            daysData.forEach(day => {
+                const daysInput = document.getElementById(`${day.id}-days`);
+                const percentInput = document.getElementById(`${day.id}-percent`);
+                const daysProgress = document.getElementById(`${day.id}-days-progress`);
+                const percentProgress = document.getElementById(`${day.id}-percent-progress`);
+                const daysPercent = document.getElementById(`${day.id}-days-percent`);
+                const percentDisplay = document.getElementById(`${day.id}-percent-display`);
+                
+                // 天数进度
+                const daysValue = parseFloat(daysInput.value) || 0;
+                const daysPercentValue = Math.round((daysValue / 31) * 100);
+                daysProgress.style.width = `${daysPercentValue}%`;
+                daysPercent.textContent = `${daysPercentValue}%`;
+                
+                // 百分比进度
+                const percentValue = parseFloat(percentInput.value) || 0;
+                percentProgress.style.width = `${percentValue}%`;
+                percentDisplay.textContent = `${percentValue.toFixed(1)}%`;
+            });
+        }
+
+        // 显示结果
+        function displayResults(results, totalTarget) {
+            const resultsGrid = document.getElementById('resultsGrid');
+            const summarySection = document.getElementById('summarySection');
+            
+            // 清空之前的结果
+            resultsGrid.innerHTML = '';
+            summarySection.innerHTML = '';
+            
+            // 计算总和验证
+            const calculatedTotal = results.reduce((sum, r) => sum + r.totalTarget, 0);
+            
+            // 生成每日目标卡片
+            results.forEach(result => {
+                const resultCard = document.createElement('div');
+                resultCard.className = 'result-card';
+                resultCard.style.borderLeftColor = result.color;
+                resultCard.innerHTML = `
+                    <div class="result-day">${result.name}</div>
+                    <div class="result-amount">¥${formatNumber(result.totalTarget.toFixed(2))}</div>
+                    <div class="result-percent">${result.percent.toFixed(1)}%</div>
+                    <div class="result-details">
+                        <div>本月天数: ${result.days}天</div>
+                        <div>日均目标: ¥${formatNumber(result.dailyAverage.toFixed(2))}</div>
+                        </div>
+                `;
+                resultsGrid.appendChild(resultCard);
+            });
+            
+            // 生成汇总信息
+            summarySection.innerHTML = `
+                <h3><i class="fas fa-chart-bar"></i> 目标拆解汇总</h3>
+                <div class="summary-item">
+                    <span>本月总目标</span>
+                    <span style="color: #667eea; font-weight: bold;">¥${formatNumber(totalTarget.toFixed(2))}</span>
+                </div>
+                <div class="summary-item">
+                    <span>计算后总计</span>
+                    <span style="color: ${Math.abs(calculatedTotal - totalTarget) < 1 ? '#4CAF50' : '#f44336'};">
+                        ¥${formatNumber(calculatedTotal.toFixed(2))}
+                    </span>
+                </div>
+                <div class="summary-item">
+                    <span>占比验证</span>
+                    <span style="color: ${Math.abs(results.reduce((sum, r) => sum + r.percent, 0) - 100) < 0.1 ? '#4CAF50' : '#f44336'}">
+                        ${results.reduce((sum, r) => sum + r.percent, 0).toFixed(1)}%
+                    </span>
+                </div>
+                <div class="summary-item" style="margin-top: 15px; padding-top: 15px; border-top: 2px solid #eee;">
+                    <span>工作日总数</span>
+                    <span>${results.reduce((sum, r) => sum + r.days, 0)}天</span>
+                </div>
+            `;
+            
+            // 显示结果区域
+            document.getElementById('resultsSection').classList.add('active');
+            
+            // 滚动到结果
+            resultsSection.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 重置计算器
+        function resetCalculator() {
+            // 重置输入框
+            document.querySelectorAll('.day-input').forEach(input => {
+                input.value = '4';
+            });
+            
+            const defaultPercentages = [20, 18, 19, 18, 19, 4, 2];
+            document.querySelectorAll('.percent-input').forEach((input, index) => {
+                input.value = defaultPercentages[index];
+            });
+            
+            document.getElementById('totalTarget').value = '100000';
+            
+            // 重置错误提示
+            document.querySelectorAll('.validation-error').forEach(el => {
+                el.style.display = 'none';
+            });
+            
+            // 隐藏结果
+            document.getElementById('resultsSection').classList.remove('active');
+            
+            // 更新进度条
+            updateProgressBars();
+        }
+
+        // 数字格式化
+        function formatNumber(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // 初始化事件监听
+        function initEventListeners() {
+            // 实时更新进度条
+            document.querySelectorAll('.day-input, .percent-input').forEach(input => {
+                input.addEventListener('input', updateProgressBars);
+            });
+            
+            // 百分比总和验证
+            document.querySelectorAll('.percent-input').forEach(input => {
+                input.addEventListener('blur', () => {
+                    const totalPercent = Array.from(document.querySelectorAll('.percent-input'))
+                        .reduce((sum, el) => sum + (parseFloat(el.value) || 0), 0);
+                    
+                    if (Math.abs(totalPercent - 100) > 0.1) {
+                        showError('mon-percent', `当前占比总和为${totalPercent.toFixed(1)}%，应为100%`);
+                    } else {
+                        const errorElement = document.getElementById('mon-percent-error');
+                        if (errorElement) errorElement.style.display = 'none';
+                    }
+                });
+            });
+            
+            // 回车键计算
+            document.getElementById('totalTarget').addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') calculateTargets();
+            });
+        }
+    </script>
+</body>
+</html>
